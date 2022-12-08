@@ -173,15 +173,85 @@ SELECT * FROM aluno WHERE ativo IS NULL;
 
 
 
+SELECT * 
+	FROM aluno
+WHERE nome LIKE 'D%'
+	AND cpf IS NOT NULL;
+	
+SELECT * 
+	FROM aluno
+WHERE nome LIKE 'Diogo'
+	OR nome LIKE 'Rodrigo'
+	OR nome LIKE 'Nico%';
+
+SELECT *
+	FROM aluno
+WHERE nome LIKE '%Steppat'
+	AND nome LIKE 'Nico%';
+
+
+SELECT * 
+	FROM aluno
+WHERE nome LIKE 'Thiago'
+	OR nome LIKE 'Miguel';
 
 
 
+DROP TABLE curso;
 
+CREATE TABLE curso (
 
+	id INTEGER NOT NULL PRIMARY KEY,
+	nome VARCHAR(255) NOT NULL
 
+)
 
+INSERT INTO curso (id, nome) VALUES (NULL, NULL);
+INSERT INTO curso (id, nome) VALUES (1, NULL);
+INSERT INTO curso (id, nome) VALUES (NULL, 'HTML');
 
+INSERT INTO curso (id, nome) VALUES (1, 'HTML');
+INSERT INTO curso (id, nome) VALUES (2, 'Javascript');
 
+SELECT * FROM curso;
+SELECT * FROM aluno;
+
+DROP TABLE aluno;
+
+CREATE TABLE aluno (
+
+	id SERIAL PRIMARY KEY,
+	nome VARCHAR(255) NOT NULL
+
+);
+
+INSERT INTO aluno (nome) VALUES ('Diogo');
+INSERT INTO aluno (nome) VALUES ('vINICIUS');
+
+SELECT * FROM aluno;
+SELECT * FROM curso;
+
+DROP TABLE aluno_curso;
+
+CREATE TABLE aluno_curso (
+
+	aluno_id INTEGER,
+	curso_id INTEGER,
+	PRIMARY KEY (aluno_id, curso_id)
+	
+	FOREIGN KEY (aluno_id)
+		REFERENCES aluno (id),
+	
+	FOREIGN KEY (curso_id)
+		REFERENCES curso (id)
+	
+);
+
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (1, 1);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (2, 1);
+
+SELECT * FROM aluno WHERE id = 1;
+SELECT * FROM curso WHERE id = 1;
 
 
 

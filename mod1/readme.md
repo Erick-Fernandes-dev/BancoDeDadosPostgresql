@@ -369,3 +369,28 @@ WHERE nome LIKE 'Thiago'
 - Como filtrar registros para campos do tipo booleano
   - =, !=, <>
 - Como funciona os operadores lógicos AND e OR
+
+## Trabalhando com relacionamentos
+
+### Criando tabela com chave primária
+
+**Chave primária** - "uma coluna, ou grupo de colunas, que pode ser usada para identificar uma linha da tabela".
+
+```sql
+CREATE TABLE curso (
+
+	id INTEGER NOT NULL PRIMARY KEY,
+	nome VARCHAR(255) NOT NULL
+
+)
+```
+Uma chave primária não pode ser nula e precisa ser única.
+
+### Criando uma tabela com chave estrangeira
+
+```sql
+
+FOREIGN KEY (CAMPO_NA_TABELA_ORIGEM)
+REFERENCES TABELA_DESTINO (CAMPO_NA_TABELA DESTINO)
+
+```
