@@ -237,7 +237,7 @@ CREATE TABLE aluno_curso (
 
 	aluno_id INTEGER,
 	curso_id INTEGER,
-	PRIMARY KEY (aluno_id, curso_id)
+	PRIMARY KEY (aluno_id, curso_id),
 	
 	FOREIGN KEY (aluno_id)
 		REFERENCES aluno (id),
@@ -250,18 +250,213 @@ CREATE TABLE aluno_curso (
 INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (1, 1);
 INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (2, 1);
 
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (3, 1);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (1, 3);
+
+
 SELECT * FROM aluno WHERE id = 1;
 SELECT * FROM curso WHERE id = 1;
 
+SELECT * FROM aluno WHERE id = 2;
+SELECT * FROM curso WHERE id = 1;
+
+SELECT * FROM aluno WHERE id = 3;
+SELECT * FROM curso WHERE id = 1;
+
+
+SELECT *
+	FROM aluno
+	JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+	JOIN curso		 ON curso.id             = aluno_curso.curso_id
+
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (2, 2);
+
+SELECT aluno.nome as "Nome do Aluno",
+	   curso.nome as "Nome do Curso"
+	FROM aluno
+	JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+	JOIN curso       ON curso.id             = aluno_curso.curso_id
+
+INSERT INTO aluno (nome) VALUES ('Nico');
+INSERT INTO curso (id, nome) VALUES (3, 'CSS');
+
+
+
+SELECT aluno.nome as "Nome do Aluno",
+	   curso.nome as "Nome do Curso"
+	FROM aluno
+LEFT JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+LEFT JOIN curso       ON curso.id             = aluno_curso.curso_id
+
+
+
+SELECT aluno.nome as "Nome do Aluno",
+	   curso.nome as "Nome do Curso"
+	FROM aluno
+RIGHT JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+RIGHT JOIN curso       ON curso.id             = aluno_curso.curso_id
+
+SELECT aluno.nome as "Nome do Aluno",
+	   curso.nome as "Nome do Curso"
+	  FROM aluno
+FULL JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+FULL JOIN curso       ON curso.id             = aluno_curso.curso_id
+
+
+SELECT aluno.nome as "Nome do Aluno",
+	   curso.nome as "Nome do Curso"
+	From aluno
+CROSS JOIN curso;
+
+INSERT INTO aluno (nome) VALUES ('João');
+
+SELECT * FROM aluno;
+SELECT * FROM aluno_curso;
+SELECT * FROM curso;
+
+DELETE FROM aluno WHERE id = 1;
+
+DROP TABLE aluno_curso;
+
+CREATE TABLE aluno_curso (
+
+	aluno_id INTEGER,
+	curso_id INTEGER,
+	
+	PRIMARY KEY (aluno_id, curso_id),
+	
+	FOREIGN KEY (aluno_id) 
+		REFERENCES aluno (id)
+	ON DELETE CASCADE,
+	
+	FOREIGN KEY (curso_id) 
+		REFERENCES curso (id)
+
+);
+
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (1, 1);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (2, 1);
+
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (3, 1);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (1, 3);
+
+SELECT * FROM aluno_curso;
+
+SELECT aluno.nome as "Nome do Aluno",
+	   curso.nome as "Nome do Curso"
+	FROM aluno
+	JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+	JOIN curso       ON curso.id             = aluno_curso.curso_id
+
+
+SELECT * FROM aluno;
+
+UPDATE aluno
+	SET id = 10
+	WHERE id = 2;
+
+UPDATE aluno
+	SET id = 20
+	WHERE id = 4;
+
+
+DROP TABLE aluno_curso;
+
+CREATE TABLE aluno_curso (
+
+	aluno_id INTEGER,
+	curso_id INTEGER,
+	
+	PRIMARY KEY (aluno_id, curso_id),
+	
+	FOREIGN KEY (aluno_id) 
+		REFERENCES aluno (id)
+	ON DELETE CASCADE
+	ON UPDATE CASCADE,
+	
+	FOREIGN KEY (curso_id) 
+		REFERENCES curso (id)
+
+);
+
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (2, 1);
+
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (3, 1);
+
+
+SELECT 
+	   aluno.id   as aluno_id,
+	   aluno.nome as "Nome do Aluno",
+	   curso.id   as curso_id,
+	   curso.nome as "Nome do Curso"
+	FROM aluno
+	JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+	JOIN curso       ON curso.id             = aluno_curso.curso_id
+
+SELECT * FROM aluno;
+
+UPDATE aluno
+	SET id = 10
+	WHERE id = 2;
+
+SELECT * FROM aluno_curso;
+
+
+CREATE TABLE funcionarios (
+
+	id SERIAL PRIMARY KEY,
+	matricula VARCHAR(10),
+	nome VARCHAR(255),
+	sobrenome VARCHAR(255)
+
+);
+
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M001', 'Diogo', 'Mascarenhas');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M002', 'Vinícius', 'Dias');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M003', 'Nico', 'Steppat');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M004', 'João', 'Roberto');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M005', 'Diogo', 'Mascarenhas');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M006', 'Alberto', 'Martins');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M007', 'Diogo', 'Oliveira');
 
 
 
 
+SELECT * FROM funcionarios ORDER BY nome DESC;
+SELECT * FROM funcionarios ORDER BY nome, matricula DESC;
+
+SELECT * FROM funcionarios ORDER BY 3, 4, 2;
+
+SELECT * FROM funcionarios ORDER BY 4, nome DESC, 2 ASC;
+
+SELECT 
+	   aluno.id   as aluno_id,
+	   aluno.nome as "Nome do Aluno",
+	   curso.id   as curso_id,
+	   curso.nome as "Nome do Curso"
+	FROM aluno
+	JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+	JOIN curso       ON curso.id             = aluno_curso.curso_id
+	ORDER BY aluno.nome DESC, curso.nome
+
+SELECT * FROM curso;
+SELECT * FROM aluno;
+	
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (20, 3);
+
+SELECT 
+	   aluno.id   as aluno_id,
+	   aluno.nome as "Nome do Aluno",
+	   curso.id   as curso_id,
+	   curso.nome as "Nome do Curso"
+	FROM aluno
+	JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+	JOIN curso       ON curso.id             = aluno_curso.curso_id
+	ORDER BY curso.nome, aluno.nome;
 
 
-
-
-
-
-
-
+SELECT *
+	FROM funcionarios
+	ORDER BY id
+  LIMIT 5
+OFFSET 3;

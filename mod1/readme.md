@@ -394,3 +394,218 @@ FOREIGN KEY (CAMPO_NA_TABELA_ORIGEM)
 REFERENCES TABELA_DESTINO (CAMPO_NA_TABELA DESTINO)
 
 ```
+**Chave estrangeira** - uma limitação para especificar que o valor de uma coluna (ou múltiplas colunas) precisa corresponder a alguma linha de outra tabela.
+
+A chave estrangeira bloqueia a entrada de um registro que não existe na tabela de destino, então usamos essa chave para evitar inconsistências no banco de dados.
+
+**EX:**
+
+```sql
+CREATE TABLE aluno_curso (
+
+	aluno_id INTEGER,
+	curso_id INTEGER,
+	PRIMARY KEY (aluno_id, curso_id),
+	
+	FOREIGN KEY (aluno_id)
+		REFERENCES aluno (id),
+	
+	FOREIGN KEY (curso_id)
+		REFERENCES curso (id)
+	
+);
+```
+
+### Consultas com relacionamentos
+
+**JOIN** - Comando que une os dados existentes na tabela "A" com os dados existentes na tabela "B".
+
+```sql
+SELECT *
+  FROM aluno
+  JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+
+```
+
+![](https://caelum-online-public.s3.amazonaws.com/1659-postgreSQL-Primeiros-passos-com-SQL/Transcri%C3%A7%C3%A3o/Aula_4/Imagens/join_aluno_alunocurso.png)
+
+```sql
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (2, 2);
+```
+
+![](https://caelum-online-public.s3.amazonaws.com/1659-postgreSQL-Primeiros-passos-com-SQL/Transcri%C3%A7%C3%A3o/Aula_4/Imagens/tabela_completa_join.png)
+
+É possível informarmos na busca que queremos o retorno apenas dos nomes dos alunos e dos cursos, porém nas duas tabelas esses dados estão na coluna "nome", o que deixa a visualização dos resultados confusa. Portanto utilizaremos um alias para termos um retorno mais organizado.
+
+```sql
+
+SELECT aluno.nome as aluno,
+       curso.nome as curso
+  FROM aluno
+  JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+  JOIN curso ON curso.id = aluno_curso.curso_id
+
+```
+
+
+Executando o código, notamos que agora a tabela especifica qual coluna tem os nomes de alunos e qual tem os nomes de cursos. Nosso código também funcionaria se escrevêssemos aluno.nome as aluno_nome, curso.nome as curso_nome ou, quando elaborarmos um relatório, com os nomes das colunas entre aspas.
+
+```sql
+
+SELECT aluno.nome as "Nome do Aluno",
+       curso.nome as "Nome do Curso"
+  FROM aluno
+  JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+  JOIN curso ON curso.id = aluno_curso.curso_id
+
+```
+
+### LEFT, RIGHT, CROSS E FULL JOINS
+
+**LEFT**
+Retorna todos os registros da tabela esquerda e os registros correspondentes da tabela direita.
+
+Para cada linha da tabela A, a consulta a compara com todas as linhas da tabela B. Se um par de linhas fizer com que a condição de junção seja avaliado como ``TRUE``, os valores da coluna dessas linhas serão combinados para formar uma nova linha que será incluída no conjunto de resultados.
+
+Se uma linha da tabela **“esquerda” A** não tiver nenhuma linha correspondente da tabela **“direita” B**, a consulta irá combinar os valores da coluna da linha da tabela **“esquerda” A** com ``NULL`` para cada valor da coluna da tabela da **“direita” B** que não satisfaça a condição de junto (``FALSE``).
+
+Em resumo, a cláusula ``LEFT JOIN`` retorna todas as linhas da tabela **“esquerda” A** e as linhas correspondentes ou valores ``NULL`` da tabela **“esquerda” A**.
+
+```sql
+
+SELECT aluno.nome as "Nome do Aluno",
+	   curso.nome as "Nome do Curso"
+	FROM aluno
+LEFT JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+LEFT JOIN curso       ON curso.id             = aluno_curso.curso_id
+```
+![](img/left_ex.png)
+
+**RIGHT**
+
+Retorna todos os registros da tabela direita e os registros correspondentes da tabela esquerda.
+
+A ``RIGHT JOIN`` combina dados de duas ou mais tabelas. A ``RIGHT JOIN`` começa a selecionar dados da tabela **“direita” B** e a corresponder às linhas da tabela **“esquerda” A**.
+
+A ``RIGHT JOIN`` retorna um conjunto de resultados que inclui todas as linhas da tabela **“direita” B**, com ou sem linhas correspondentes na tabela **“esquerda” A**. Se uma linha na tabela **direita B** não tiver nenhuma linha correspondente da tabela **“esquerda” A**, a coluna da tabela **“esquerda” A** no conjunto de resultados será nula igualmente ao que acontece no LEFT JOIN.
+
+```SQL
+
+SELECT aluno.nome as "Nome do Aluno",
+	   curso.nome as "Nome do Curso"
+	FROM aluno
+RIGHT JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+RIGHT JOIN curso       ON curso.id             = aluno_curso.curso_id
+```
+![](img/RIGHT_EX.png)
+
+**FULL JOIN**
+
+Retorna todos os registros quando houver uma correspondência na tabela esquerda ou direita.
+
+A cláusula ``FULL JOIN`` retorna todas as linhas das tabelas unidas, correspondidas ou não, ou seja, você pode dizer que a ``FULL JOIN`` combina as funções da ``LEFT JOIN`` e da ``RIGHT JOIN``. ``FULL JOIN`` é um tipo de junção externa, por isso também é chamada junção externa completa.
+
+Quando não existem linhas correspondentes para a linha da tabela esquerda, as colunas da tabela direita serão nulas. Da mesma forma, quando não existem linhas correspondentes para a linha da tabela direita, a coluna da tabela esquerda será nula.
+
+```SQL
+
+SELECT aluno.nome as "Nome do Aluno",
+	   curso.nome as "Nome do Curso"
+	  FROM aluno
+FULL JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+FULL JOIN curso       ON curso.id             = aluno_curso.curso_id
+```
+![](img/FULL_JOIN_EX.png)
+
+**CROSS JOIN**
+
+A cláusula **CROSS JOIN** retorna todas as linhas das tabelas por cruzamento, ou seja, para cada linha da tabela esquerda queremos todos os linhas da tabelas direita ou vice-versa. Ele também é chamado de produto cartesiano entre duas tabelas. Porém, para isso é preciso que ambas tenham o campo em comum, para que a ligação exista entre as duas tabelas.
+
+Para entender melhor, pense que temos um banco de dado, onde temos uma tabela FUNCIONÁRIO e uma tabela CARGO, assim poderíamos ter vários cargos para um único FUNCIONÁRIO, e usando o **CROSS JOIN** podemos trazer todos os CARGOS de todos os FUNCIONÁRIOS.
+
+```sql
+
+SELECT aluno.nome as "Nome do Aluno",
+	   curso.nome as "Nome do Curso"
+	From aluno
+CROSS JOIN curso;
+```
+![](img/cross_ex.png)
+
+### Resumo do módulo
+
+- Como funciona a chave primária
+- Como funciona os campos que aceitam ``NULL`` e que não aceitam ``NULL`` (``NOT NULL``)
+- Como funciona um campo ``UNIQUE``
+- Como criar uma chave primária
+- Como funciona a chave estrangeira
+- Como criar uma chave estrangeira
+- Como criar consultas com relacionamentos
+	- ``INNER JOIN``
+	- ``LEFT JOIN``
+	- ``RIGHT JOIN``
+	- ``FULL JOIN``
+	- ``CROSS JOIN``
+
+## Usando CASCADE
+
+#### DELETE CASCADE
+
+Quando criamos a nossa ``FOREIGN KEY``, o padrão dela é o comando ``ON DELETE RETRICT``, ou seja, a chave estrangeira restringe o apagamento de dados que estão em duas tabelas. Ao trocarmos para ``ON DELETE CASCADE`` , sempre que apagarmos um dado de um banco, o registro será apagado de todas as tabelas que o contém, ou seja, quando apagarmos o dado do aluno, ele também será excluído do curso.
+
+```SQL
+
+CREATE TABLE aluno_curso (
+    aluno_id INTEGER,
+    curso_id INTEGER,
+    PRIMARY KEY (aluno_id, curso_id),
+
+    FOREIGN KEY (aluno_id),
+     REFERENCES aluno (id),
+     ON DELETE CASCADE
+
+    FOREIGN KEY (curso_id),
+     REFERENCES curso (id)
+
+);
+```
+
+```SQL
+DELETE FROM aluno WHERE id = 1;
+```
+
+#### UPDATE CASCADE
+
+Assim como atualizamos com o comando DELETE CASCADE, adicionaremos o código UPDATE CASCADE , ou seja, quando alterarmos o dado em alguma tabela, ele também será alterado em todos os bancos relacionados entre si. Antes disso, apagaremos a tabela "aluno_curso" existente para executarmos o código a seguir.
+
+```SQL
+
+CREATE TABLE aluno_curso (
+    aluno_id INTEGER,
+        curso_id INTEGER,
+        PRIMARY KEY (aluno_id, curso_id),
+
+        FOREIGN KEY (aluno_id),
+         REFERENCES aluno (id),
+         ON DELETE CASCADE
+         ON  UPDATE CASCADE
+
+        FOREIGN KEY (curso_id),
+         REFERENCES curso (id)
+
+);
+
+```
+
+Com essa atualização, ao codarmos ``UPDATE aluno SET id = 20 WHERE id = 2`` teremos sucesso, e ao executarmos novamente a query, notaremos que o id do Vinícius mudou para "10". Escrevendo ``SELECT * FROM aluno_curso`` , notamos que a atualização do id também ocorreu na tabela "aluno_curso". Isso significa que com o comando ``UPDATE`` , ao atualizarmos a tabela "aluno", o dado também será alterado em "aluno_curso".
+
+### Resumo do módulo
+
+- Como funciona as restrições de chave estrangeira
+- A diferença entre RESTRICT e CASCADE
+- Como aplicar tipos diferentes de restrições de chave estrangeira no DELETE
+	- RESTRICT
+	- CASCADE
+- A aplicar tipos diferentes de restrições de chave estrangeira no UPDATE
+	- RESTRICT
+	- CASCADE
