@@ -609,3 +609,59 @@ Com essa atualização, ao codarmos ``UPDATE aluno SET id = 20 WHERE id = 2`` te
 - A aplicar tipos diferentes de restrições de chave estrangeira no UPDATE
 	- RESTRICT
 	- CASCADE
+
+## Avançando com consultas
+
+#### Ordenando as consultas
+
+``ORDER`` - Definir uma ordem
+``DESC`` - Decrescente
+``ASC`` - Crescente
+
+```sql
+-- Ordenando por nome de forma decrescente
+SELECT * FROM funcionarios ORDER BY nome DESC;
+-- Ordenando por nome e matricula de forma decrescente
+SELECT * FROM funcionarios ORDER BY nome, matricula DESC;
+-- Ordenando por posição na coluna
+SELECT * FROM funcionarios ORDER BY 3, 4, 2;
+-- Ordenando por posição, nome de forma decrescente e posição de forma crescente
+SELECT * FROM funcionarios ORDER BY 4, nome DESC, 2 ASC;
+
+-- Ordenando por nome da tabela aluno de forma decrescente e por nome da tabela curso.
+SELECT 
+	   aluno.id   as aluno_id,
+	   aluno.nome as "Nome do Aluno",
+	   curso.id   as curso_id,
+	   curso.nome as "Nome do Curso"
+	FROM aluno
+	JOIN aluno_curso ON aluno_curso.aluno_id = aluno.id
+	JOIN curso       ON curso.id             = aluno_curso.curso_id
+	ORDER BY aluno.nome DESC, curso.nome
+```
+#### Limitando consultas
+
+``LIMIT`` -  Para limitarmos o retorno.
+
+```sql
+SELECT *
+	FROM funcionarios
+	ORDER BY id
+  LIMIT 5;
+```
+
+``OFFSET``
+
+
+Se precisarmos do retorno de dados que não estão no começo da tabela, ou seja, exibir o resultado após avançar algumas linhas.
+ Essa cláusula pula a quantidade de linhas que estipularmos antes de exibir a busca, como podemos observar na simulação a seguir. Nela a ordenação será pelo "id" para visualizarmos melhor essa função.
+
+```sql
+SELECT *
+	FROM funcionarios
+	ORDER BY id
+  LIMIT 5
+OFFSET 3;
+```
+
+
