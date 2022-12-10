@@ -650,7 +650,7 @@ SELECT *
   LIMIT 5;
 ```
 
-``OFFSET``
+``OFFSET``:
 
 
 Se precisarmos do retorno de dados que não estão no começo da tabela, ou seja, exibir o resultado após avançar algumas linhas.
@@ -663,5 +663,172 @@ SELECT *
   LIMIT 5
 OFFSET 3;
 ```
+#### Funções de agregação
+
+**As principais funções de agregação**
 
 
+
+- ``COUNT`` - Retorna a quantidade de registros
+- ``SUM`` -   Retorna a soma dos registros
+- ``MAX`` -   Retorna o maior valor dos registos
+- ``MIN`` -   Retorna o menor valor dos registros
+- ``AVG`` -   Retorna a média dos registros
+
+```sql
+SELECT COUNT(id),
+		SUM(id),
+		MAX(id),
+		MIN(id),
+		AVG(id)
+	FROM funcionarios;
+```
+
+#### Agrupando consultas
+
+``DISTINCT`` -  Garante que os dados do campo solicitado não se repitam, a partir do agrupamento de informações.
+
+```sql
+
+SELECT DISTINCT
+        nome
+  FROM funcionarios
+  ORDER BY nome;
+
+SELECT DISTINCT
+        nome,
+        sobrenome
+  FROM funcionarios
+  ORDER BY nome;
+
+```
+``GROUP BY``- é um agrupamento para realização de buscas com funções de agregação. Em outras palavras, se o agrupamento da busca não precisar de agregação, realizamos com ``DISTINCT`` , do contrário, codaremos com ``GROUP BY`` .
+
+```sql
+
+SELECT
+       nome,
+       sobrenome,
+       COUNT(*)
+  FROM funcionarios
+  GROUP BY nome, sobrenome
+  ORDER BY nome;
+```
+Para entendermos melhor esse agrupamento, faremos simulações com as tabelas "aluno", "curso" e "aluno_curso", criadas nas últimas aulas. Nossa primeira situação será contar todos os cursos com alunos. Para isso, precisamos do retorno dessas tabelas.
+
+```sql
+SELECT *
+    FROM aluno
+    JOIN aluno_curso ON aluno.id = aluno_curso.aluno_id
+    JOIN curso ON curso.id = aluno_curso.curso_id
+```
+
+Façamos uma nova busca que mostre os nomes dos cursos e a quantidade de alunos em cada um deles. Além disso, ordenaremos os dados pelo nome, informando a posição do campo.
+
+```sql
+SELECT curso.nome
+        COUNT(aluno.id)
+    FROM aluno
+    JOIN aluno_curso ON aluno.id = aluno_curso.aluno_id
+    JOIN curso ON curso.id = aluno_curso.curso_id
+    GROUP BY 1
+    ORDER BY 1
+```
+
+#### Filtrando consultas agrupadas
+
+**Lembrete:** Sempre que aplicarmos um agrupamento na busca, é necessário codarmos o comando ``GROUP BY nome_ou_posição_do_campo`` .
+
+```sql
+
+SELECT *
+        COUNT (aluno.id)
+    FROM curso
+    LEFT JOIN aluno_curso ON aluno.curso_id = curso.id
+    LEFT JOIN aluno ON aluno.id = aluno_curso.aluno_id
+GROUP BY 1
+
+```
+
+Os resultados mostram a quantidade de alunos por curso, sendo **"0"** em Javascript, **"1"** em CSS e **"2"** em HTML. Agora podemos filtrar esses dados. Aprendemos que os filtros utilizam ``WHERE`` , então escreveremos ``WHERE COUNT(aluno.id) = 0``.
+
+```sql
+SELECT *
+    FROM curso
+    LEFT JOIN aluno_curso ON aluno.curso_id = curso.id
+    LEFT JOIN aluno ON aluno.id = aluno_curso.aluno_id
+    WHERE COUNT(aluno.id) = 0
+GROUP BY 1
+```
+
+Recebemos uma mensagem de erro com esse código. Isso aconteceu porque o **GROUP BY** utiliza funções de agrupamento que não funcionam com o **WHERE** . Se substituirmos no código **WHERE COUNT(aluno.id) = 0** por **WHERE nome.curso = 'Javascript'** , a tabela retorna o curso de Javascript e informa que tem zero alunos matriculados.
+
+Entretanto, não queremos isso, porque nem sempre saberemos o curso sem alunos. Portanto, nosso filtro precisa ser com base na função de agrupamento.
+
+**Logo, usaremos o HAVING**
+
+``HAVING`` -  É utilizado quando há agregações
+``WHERE`` - Nas outras ocasiões.
+
+>**Dica:** Quando quiser adicionar um comentário no código do pgAdmin, utilize ``--`` . Dessa forma, a linha com esse sinal no começo não será lida durante a execução do código.
+
+```SQL
+SELECT curso.nome,
+		COUNT(aluno.id)
+	FROM curso
+	LEFT JOIN aluno_curso ON aluno_curso.curso_id = curso.id
+	LEFT JOIN aluno ON aluno.id = aluno_curso.aluno_id
+	
+	--WHERE curso.nome = 'Javascript'
+GROUP BY 1
+	HAVING COUNT(aluno.id) > 0;
+
+
+--  listar os funcionários com nome duplicado
+SELECT nome
+    FROM funcionarios
+    GROUP BY nome
+    HAVING COUNT(id) > 1;
+
+-- retorne o nome dos funcionários que aparecem apenas uma vez
+SELECT nome,
+		COUNT(id)
+	FROM funcionarios
+	GROUP BY nome
+	HAVING COUNT(id) = 1;
+-- retorne o nome dos funcionários que aparecem mais de uma vez
+SELECT nome,
+		COUNT(id)
+	FROM funcionarios
+	GROUP BY nome
+	HAVING COUNT(id) > 1;
+
+```
+
+#### Resumo do modulo
+
+- Como ordenar uma consulta
+	- Ordenar utilizando os nomes de campo
+	- Ordenar com mais de um campo
+	- Ordenar por posição do campo
+	- Ordenar por ordem Crescente e Decrescente
+	- Ordenar com campos de tabelas diferentes
+- Como limitar quantidade e paginar registros de consulta
+	- ``LIMIT``
+	- ``OFFSET``
+- Como funcionam as funções de agregação
+	- ``COUNT``
+	- ``SUM``
+	- ``MAX``
+	- ``MIN``
+	- ``AVG``
+- Como funciona a função de arredondamento ``ROUND``
+- Como funciona o agrupamento de dados
+	- A diferença entre ``DISTINCT`` e ``GROUP BY``
+	- Onde utilizar o ``DISTINCT``
+	- Onde utilizar o ``GROUP BY``
+	- Como utilizar o ``GROUP BY`` com os nomes de campo
+	- Como utilizar o ``GROUP BY`` por posição
+- Como funcionam os filtros por funções de agrupamento, utilizando ``HAVING``
+	- A diferença entre ``WHERE`` e ``HAVING``
+	- Como utilizar o ``HAVING``

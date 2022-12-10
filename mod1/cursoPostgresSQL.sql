@@ -460,3 +460,70 @@ SELECT *
 	ORDER BY id
   LIMIT 5
 OFFSET 3;
+
+
+SELECT COUNT(id),
+		SUM(id),
+		MAX(id),
+		MIN(id),
+		ROUND(AVG(id), 0)
+	FROM funcionarios;
+
+
+SELECT DISTINCT
+	nome,
+	sobrenome
+
+FROM funcionarios
+ORDER BY nome;
+
+
+SELECT
+	nome,
+	sobrenome,
+	COUNT(id)
+FROM funcionarios
+GROUP BY nome, sobrenome
+ORDER BY nome;
+
+
+SELECT
+	nome,
+	sobrenome,
+	COUNT(id)
+FROM funcionarios
+GROUP BY 1, 2
+ORDER BY nome;
+
+SELECT curso.nome,
+		COUNT(aluno.id)
+	FROM aluno
+	JOIN aluno_curso ON aluno.id = aluno_curso.aluno_id
+	JOIN curso       ON curso.id = aluno_curso.curso_id
+GROUP BY 1
+ORDER BY 1
+
+
+SELECT * FROM aluno;
+SELECT * FROM aluno_curso;
+SELECT * FROM curso;
+
+SELECT curso.nome,
+		COUNT(aluno.id)
+	FROM curso
+	LEFT JOIN aluno_curso ON aluno_curso.curso_id = curso.id
+	LEFT JOIN aluno ON aluno.id = aluno_curso.aluno_id
+	
+	--WHERE curso.nome = 'Javascript'
+GROUP BY 1
+	HAVING COUNT(aluno.id) > 0;
+	
+
+
+SELECT nome,
+		COUNT(id)
+	FROM funcionarios
+	GROUP BY nome
+	HAVING COUNT(id) > 1;
+
+
